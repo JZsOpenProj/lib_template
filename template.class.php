@@ -22,7 +22,6 @@ class template {
 	var $const_regexp = "\{([\w]+)\}";
 
 	var $languages = array();
-	var $sid;
 
 	function __construct() {
 		ob_start();
@@ -131,37 +130,8 @@ class template {
 		return !empty($this->languages[$k]) ? $this->languages[$k] : "{ $k }";
 	}
 
-	function _transsid($url, $tag = '', $wml = 0) {
-		$sid = $this->sid;
-		$tag = stripslashes($tag);
-		if(!$tag || (!preg_match("/^(http:\/\/|mailto:|#|javascript)/i", $url) && !strpos($url, 'sid='))) {
-			if($pos = strpos($url, '#')) {
-				$urlret = substr($url, $pos);
-				$url = substr($url, 0, $pos);
-			} else {
-				$urlret = '';
-			}
-			$url .= (strpos($url, '?') ? ($wml ? '&amp;' : '&') : '?').'sid='.$sid.$urlret;
-		}
-		return $tag.$url;
-	}
-
 	function __destruct() {
-		if(isset($_COOKIE['sid'])) {
-			return;
-		}
-		$sid = rawurlencode($this->sid);
-		$searcharray = array(
-			"/\<a(\s*[^\>]+\s*)href\=([\"|\']?)([^\"\'\s]+)/ies",
-			"/(\<form.+?\>)/is"
-		);
-		$replacearray = array(
-			"\$this->_transsid('\\3','<a\\1href=\\2')",
-			"\\1\n<input type=\"hidden\" name=\"sid\" value=\"".rawurldecode(rawurldecode(rawurldecode($sid)))."\" />"
-		);
-		$content = preg_replace($searcharray, $replacearray, ob_get_contents());
 		ob_end_clean();
-		echo $content;
 	}
 
 }
