@@ -25,10 +25,6 @@ class template {
 	var $sid;
 
 	function __construct() {
-		$this->template();
-	}
-
-	function template() {
 		ob_start();
 		$template_config=$GLOBALS['_config']['system'];
 		$this->defaulttpldir = $template_config['template'].'default';
